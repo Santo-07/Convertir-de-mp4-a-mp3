@@ -7,98 +7,57 @@
 <style>
   body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
   h1 { color: #333; }
-  .container { background: #fff; padding: 30px; border-radius: 12px; display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
-  input[type="file"] { display: none; }
-  .file-drop { border: 2px dashed #aaa; padding: 40px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; transition: background 0.3s, border-color 0.3s;}
-  .file-drop.hover { background: #f0f0f0; border-color: #333; }
-  button { padding: 10px 20px; font-size: 16px; border: none; background: #007bff; color: #fff; border-radius: 8px; cursor: pointer; margin-top: 10px;}
-  button:disabled { background: #aaa; cursor: not-allowed; }
-  progress { width: 80%; margin-top: 20px; height: 20px; }
-  #downloadLink { display: none; margin-top: 20px; padding: 10px 20px; background: #28a745; color: #fff; border-radius: 8px; text-decoration: none; }
-  #status { margin-top: 15px; font-weight: bold; color: #555; }
+  input, button { padding: 10px; margin: 10px; font-size: 16px; }
+  progress { width: 80%; margin-top: 20px; }
+  a { display: block; margin-top: 20px; color: green; font-weight: bold; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Convertidor MP4 → MP3</h1>
-  <label class="file-drop" id="fileDrop">
-    Arrastra tu archivo MP4 aquí o haz clic para seleccionar
-    <input type="file" id="fileInput" accept="video/mp4">
-  </label>
-  <br>
-  <button id="convertBtn" disabled>Convertir a MP3</button>
-  <br>
-  <progress id="progressBar" value="0" max="100"></progress>
-  <div id="status"></div>
-  <a id="downloadLink" download="audio.mp3">Descargar MP3</a>
-</div>
+<h1>Convertidor MP4 → MP3</h1>
+<input type="file" id="fileInput" accept="video/mp4"><br>
+<button id="convertBtn" disabled>Convertir a MP3</button><br>
+<progress id="progressBar" value="0" max="100"></progress>
+<a id="downloadLink" style="display:none;" download="audio.mp3">Descargar MP3</a>
 
-<script>
+<script type="module">
+import { createFFmpeg, fetchFile } from "https://unpkg.com/@ffmpeg/ffmpeg@0.11.2/dist/ffmpeg.min.js";
+
+const ffmpeg = createFFmpeg({ log: true });
 const fileInput = document.getElementById("fileInput");
 const convertBtn = document.getElementById("convertBtn");
 const progressBar = document.getElementById("progressBar");
 const downloadLink = document.getElementById("downloadLink");
-const status = document.getElementById("status");
-const fileDrop = document.getElementById("fileDrop");
 
 let selectedFile = null;
 
-// Selección de archivo
+ffmpeg.setProgress(({ ratio }) => {
+  progressBar.value = ratio * 100;
+});
+
 fileInput.addEventListener("change", (e) => {
   if (e.target.files.length > 0) {
     selectedFile = e.target.files[0];
     convertBtn.disabled = false;
-    status.textContent = `Archivo listo: ${selectedFile.name}`;
   }
 });
 
-// Arrastrar y soltar
-fileDrop.addEventListener("dragover", (e) => { e.preventDefault(); fileDrop.classList.add("hover"); });
-fileDrop.addEventListener("dragleave", () => fileDrop.classList.remove("hover"));
-fileDrop.addEventListener("drop", (e) => {
-  e.preventDefault();
-  fileDrop.classList.remove("hover");
-  if (e.dataTransfer.files.length > 0) {
-    const file = e.dataTransfer.files[0];
-    if (file.type !== "video/mp4") { alert("Solo se permiten archivos MP4."); return; }
-    selectedFile = file;
-    fileInput.files = e.dataTransfer.files;
-    convertBtn.disabled = false;
-    status.textContent = `Archivo listo: ${selectedFile.name}`;
-  }
-});
-
-// Botón de conversión
-convertBtn.addEventListener("click", () => {
+convertBtn.addEventListener("click", async () => {
   if (!selectedFile) return alert("Selecciona un archivo MP4 primero.");
 
   convertBtn.disabled = true;
-  downloadLink.style.display = "none";
-  status.textContent = "Iniciando conversión...";
   progressBar.value = 0;
 
-  const worker = new Worker('worker.js');
+  if (!ffmpeg.isLoaded()) await ffmpeg.load();
 
-  worker.postMessage({ file: selectedFile });
+  ffmpeg.FS("writeFile", selectedFile.name, await fetchFile(selectedFile));
+  await ffmpeg.run("-i", selectedFile.name, "-q:a", "0", "-map", "a", "output.mp3");
 
-  worker.onmessage = (e) => {
-    const msg = e.data;
-    if (msg.type === 'progress') {
-      progressBar.value = msg.progress;
-      status.textContent = msg.message;
-    } else if (msg.type === 'done') {
-      const url = URL.createObjectURL(msg.blob);
-      downloadLink.href = url;
-      downloadLink.style.display = "inline";
-      status.textContent = "¡Conversión completa!";
-      convertBtn.disabled = false;
-      worker.terminate();
-    } else if (msg.type === 'error') {
-      status.textContent = "Error: " + msg.message;
-      convertBtn.disabled = false;
-      worker.terminate();
-    }
-  };
+  const data = ffmpeg.FS("readFile", "output.mp3");
+  const url = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mp3" }));
+
+  downloadLink.href = url;
+  downloadLink.style.display = "block";
+  convertBtn.disabled = false;
 });
 </script>
 </body>
