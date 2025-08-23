@@ -61,113 +61,48 @@
   </footer>
 
   <!-- ffmpeg.wasm UMD build from CDN -->
-  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
-  <script>
-  (function() {
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    // Usa core desde CDN (gratis). Puedes autoalojarlo si quieres trabajar offline.
-    const ffmpeg = createFFmpeg({
-      log: false,
-      corePath: "https://unpkg.com/@ffmpeg/core@0.12.6/dist/ffmpeg-core.js",
-    });
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
+ <script>
+window.onload = async function() {
+  const { createFFmpeg, fetchFile } = FFmpeg;
+  const ffmpeg = createFFmpeg({ log: true });
 
-    const fileInput = document.getElementById('file');
-    const convertBtn = document.getElementById('convert');
-    const bitrateSel = document.getElementById('bitrate');
-    const progressEl = document.getElementById('progress');
-    const statusEl = document.getElementById('status');
-    const downloadA = document.getElementById('download');
-    const dropzone = document.getElementById('dropzone');
+  await ffmpeg.load(); // espera que cargue antes de convertir
 
-    let currentFile = null;
-    const MAX_MB = 500; // límite de 500 MB para evitar cuelgues en navegadores de baja memoria
+  const fileInput = document.getElementById('file');
+  const convertBtn = document.getElementById('convert');
+  const bitrateSel = document.getElementById('bitrate');
+  const progressEl = document.getElementById('progress');
+  const statusEl = document.getElementById('status');
+  const downloadA = document.getElementById('download');
 
-    function setStatus(msg) { statusEl.textContent = msg; }
-    function setProgress(p) { progressEl.value = p; }
+  convertBtn.disabled = true;
 
-    // Drag & Drop
-    ;['dragenter','dragover'].forEach(ev =>
-      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
-    ;['dragleave','drop'].forEach(ev =>
-      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
-    dropzone.addEventListener('drop', (e) => {
-      const f = e.dataTransfer.files[0];
-      if (f) onSelectFile(f);
-    });
-    fileInput.addEventListener('change', (e) => {
-      const f = e.target.files[0];
-      if (f) onSelectFile(f);
-    });
+  fileInput.addEventListener('change', () => {
+    convertBtn.disabled = !fileInput.files.length;
+  });
 
-    function onSelectFile(file) {
-      if (!file) return;
-      const mb = file.size / (1024 * 1024);
-      if (mb > MAX_MB) {
-        setStatus("Archivo demasiado grande (" + mb.toFixed(1) + " MB). Límite " + MAX_MB + " MB.");
-        convertBtn.disabled = true;
-        return;
-      }
-      currentFile = file;
-      setStatus("Archivo listo: " + file.name + " (" + mb.toFixed(1) + " MB)");
-      convertBtn.disabled = false;
-      downloadA.classList.add('hidden');
-    }
+  convertBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    statusEl.textContent = 'Convirtiendo...';
+    progressEl.value = 0;
 
     ffmpeg.setProgress(({ ratio }) => {
-      const p = Math.min(100, Math.round(ratio * 100));
-      setProgress(p);
+      progressEl.value = Math.round(ratio * 100);
     });
 
-    async function ensureLoaded() {
-      if (!ffmpeg.isLoaded()) {
-        setStatus("Cargando motor de conversión (puede tardar la primera vez)…");
-        await ffmpeg.load();
-        setStatus("Motor listo. Selecciona un archivo y pulsa Convertir.");
-      }
-    }
+    ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
+    await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-b:a', bitrateSel.value, 'output.mp3');
+    const data = ffmpeg.FS('readFile', 'output.mp3');
+    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mpeg' }));
 
-    convertBtn.addEventListener('click', async () => {
-      if (!currentFile) return;
-      convertBtn.disabled = true;
-      setProgress(0);
-      downloadA.classList.add('hidden');
-      try {
-        await ensureLoaded();
-        setStatus("Convirtiendo… no cierres esta pestaña.");
-        const inName = "in.mp4";
-        const outName = "out.mp3";
+    downloadA.href = url;
+    downloadA.download = file.name.replace(/\.[^.]+$/, '') + '.mp3';
+    downloadA.classList.remove('hidden');
 
-        ffmpeg.FS('writeFile', inName, await fetchFile(currentFile));
-        await ffmpeg.run(
-          '-i', inName,
-          '-vn',
-          '-acodec', 'libmp3lame',
-          '-b:a', bitrateSel.value,
-          outName
-        );
-        const data = ffmpeg.FS('readFile', outName);
-        const blob = new Blob([data.buffer], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
-
-        downloadA.href = url;
-        downloadA.download = currentFile.name.replace(/\.[^.]+$/, '') + '.mp3';
-        downloadA.classList.remove('hidden');
-        setStatus("¡Listo! Haz clic en Descargar.");
-      } catch (err) {
-        console.error(err);
-        setStatus("Error durante la conversión. Prueba con un archivo más pequeño o baja el bitrate.");
-      } finally {
-        convertBtn.disabled = false;
-        setProgress(100);
-        // Limpieza de FS
-        try { ffmpeg.FS('unlink', 'in.mp4'); } catch {}
-        try { ffmpeg.FS('unlink', 'out.mp3'); } catch {}
-      }
-    });
-
-    // Mensaje inicial
-    setStatus("Listo. Selecciona un archivo MP4.");
-  })();
-  </script>
-</body>
-</html>
+    statusEl.textContent = '¡Listo! Haz clic en Descargar.';
+  });
+};
+</script>
