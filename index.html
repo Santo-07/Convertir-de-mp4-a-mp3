@@ -1,108 +1,160 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Convertidor MP4 a MP3 — Sin subir archivos</title>
-  <meta name="description" content="Convierte MP4 a MP3 gratis, rápido y privado. Todo ocurre en tu navegador; no subimos tus archivos a ningún servidor." />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🎧</text></svg>">
-  <!-- Schema.org (SoftwareApplication) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Convertidor MP4 a MP3",
-    "url": "https://example.com/",
-    "applicationCategory": "Multimedia",
-    "operatingSystem": "Any",
-    "description": "Convierte MP4 a MP3 en el navegador, sin subir archivos.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "EUR"
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertidor MP4 → MP3</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    background: #f5f5f5;
   }
-  </script>
+  h1 {
+    color: #333;
+  }
+  .container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  input[type="file"] {
+    display: none;
+  }
+  .file-drop {
+    border: 2px dashed #aaa;
+    padding: 40px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .file-drop.hover {
+    background: #f0f0f0;
+    border-color: #333;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background: #007bff;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+  progress {
+    width: 80%;
+    margin-top: 20px;
+    height: 20px;
+  }
+  #downloadLink {
+    display: none;
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background: #28a745;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+  #status {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #555;
+  }
+</style>
 </head>
 <body>
-  <header class="container">
-    <h1>MP4 → MP3 <span class="chip">Gratis</span> <span class="chip">Privado</span></h1>
-    <p>La conversión ocurre <strong>100% en tu navegador</strong>. Tus archivos <strong>no se suben</strong> a ningún servidor.</p>
-  </header>
+<div class="container">
+  <h1>Convertidor MP4 → MP3</h1>
+  <label class="file-drop" id="fileDrop">
+    Arrastra tu archivo MP4 aquí o haz clic para seleccionar
+    <input type="file" id="fileInput" accept="video/mp4">
+  </label>
+  <br>
+  <button id="convertBtn" disabled>Convertir a MP3</button>
+  <br>
+  <progress id="progressBar" value="0" max="100"></progress>
+  <div id="status"></div>
+  <a id="downloadLink" download="audio.mp3">Descargar MP3</a>
+</div>
 
-  <main class="container card">
-    <div class="uploader" id="dropzone">
-      <input id="file" type="file" accept=".mp4,video/mp4,video/mpeg,video/*" />
-      <p>Arrastra y suelta tu vídeo MP4 aquí o haz clic para elegirlo.</p>
-    </div>
+<script type="module">
+  import { createFFmpeg, fetchFile } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.2/dist/ffmpeg.min.js';
 
-    <div class="controls">
-      <label for="bitrate">Bitrate MP3:</label>
-      <select id="bitrate">
-        <option value="128k">128 kbps (ligero)</option>
-        <option value="192k" selected>192 kbps (equilibrado)</option>
-        <option value="256k">256 kbps</option>
-        <option value="320k">320 kbps (máxima calidad)</option>
-      </select>
-      <button id="convert" disabled>Convertir a MP3</button>
-    </div>
-
-    <div class="progress">
-      <progress id="progress" max="100" value="0"></progress>
-      <span id="status">Listo.</span>
-    </div>
-
-    <a id="download" class="button hidden" href="#" download="audio.mp3">Descargar MP3</a>
-  </main>
-
-  <footer class="container footer">
-    <small>Hecho con <a href="https://unpkg.com/@ffmpeg/ffmpeg">ffmpeg.wasm</a>. <a href="privacy.html">Privacidad</a></small>
-  </footer>
-
-  <!-- ffmpeg.wasm UMD build from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js"></script>
- <script>
-window.onload = async function() {
-  const { createFFmpeg, fetchFile } = FFmpeg;
   const ffmpeg = createFFmpeg({ log: true });
+  const fileInput = document.getElementById('fileInput');
+  const convertBtn = document.getElementById('convertBtn');
+  const progressBar = document.getElementById('progressBar');
+  const downloadLink = document.getElementById('downloadLink');
+  const status = document.getElementById('status');
+  const fileDrop = document.getElementById('fileDrop');
 
-  await ffmpeg.load(); // espera que cargue antes de convertir
+  let selectedFile = null;
 
-  const fileInput = document.getElementById('file');
-  const convertBtn = document.getElementById('convert');
-  const bitrateSel = document.getElementById('bitrate');
-  const progressEl = document.getElementById('progress');
-  const statusEl = document.getElementById('status');
-  const downloadA = document.getElementById('download');
+  ffmpeg.setProgress(({ ratio }) => {
+    progressBar.value = ratio * 100;
+  });
 
-  convertBtn.disabled = true;
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      selectedFile = e.target.files[0];
+      convertBtn.disabled = false;
+      status.textContent = `Archivo listo: ${selectedFile.name}`;
+    }
+  });
 
-  fileInput.addEventListener('change', () => {
-    convertBtn.disabled = !fileInput.files.length;
+  // Arrastrar y soltar
+  fileDrop.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    fileDrop.classList.add('hover');
+  });
+  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('hover'));
+  fileDrop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileDrop.classList.remove('hover');
+    if (e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      if (file.type !== 'video/mp4') {
+        alert('Solo se permiten archivos MP4.');
+        return;
+      }
+      selectedFile = file;
+      fileInput.files = e.dataTransfer.files; // para mantener referencia
+      convertBtn.disabled = false;
+      status.textContent = `Archivo listo: ${selectedFile.name}`;
+    }
   });
 
   convertBtn.addEventListener('click', async () => {
-    const file = fileInput.files[0];
-    if (!file) return;
+    if (!selectedFile) return alert('Selecciona un archivo MP4 primero.');
+    
+    convertBtn.disabled = true;
+    downloadLink.style.display = 'none';
+    status.textContent = 'Cargando FFmpeg...';
+    if (!ffmpeg.isLoaded()) await ffmpeg.load();
 
-    statusEl.textContent = 'Convirtiendo...';
-    progressEl.value = 0;
+    status.textContent = 'Convirtiendo a MP3...';
+    ffmpeg.FS('writeFile', selectedFile.name, await fetchFile(selectedFile));
+    
+    await ffmpeg.run('-i', selectedFile.name, '-q:a', '0', '-map', 'a', 'output.mp3');
 
-    ffmpeg.setProgress(({ ratio }) => {
-      progressEl.value = Math.round(ratio * 100);
-    });
-
-    ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
-    await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-b:a', bitrateSel.value, 'output.mp3');
     const data = ffmpeg.FS('readFile', 'output.mp3');
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mpeg' }));
+    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
 
-    downloadA.href = url;
-    downloadA.download = file.name.replace(/\.[^.]+$/, '') + '.mp3';
-    downloadA.classList.remove('hidden');
-
-    statusEl.textContent = '¡Listo! Haz clic en Descargar.';
+    downloadLink.href = url;
+    downloadLink.style.display = 'inline';
+    status.textContent = '¡Conversión completa!';
+    convertBtn.disabled = false;
   });
-};
 </script>
+</body>
+</html>
