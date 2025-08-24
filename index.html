@@ -1,64 +1,82 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Convertidor MP4 → MP3</title>
-<style>
-  body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
-  h1 { color: #333; }
-  input, button { padding: 10px; margin: 10px; font-size: 16px; }
-  progress { width: 80%; margin-top: 20px; }
-  a { display: block; margin-top: 20px; color: green; font-weight: bold; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convertidor MP4 → MP3</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
+    h1 { color: #333; }
+    .drop-area { border: 2px dashed #aaa; padding: 40px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; }
+    .drop-area.hover { background: #f0f0f0; border-color: #333; }
+    button { padding: 10px 20px; font-size: 16px; margin-top: 10px; }
+    progress { width: 80%; margin-top: 20px; }
+    a { display: block; margin-top: 20px; color: green; font-weight: bold; }
+  </style>
 </head>
 <body>
-<h1>Convertidor MP4 → MP3</h1>
-<input type="file" id="fileInput" accept="video/mp4"><br>
-<button id="convertBtn" disabled>Convertir a MP3</button><br>
-<progress id="progressBar" value="0" max="100"></progress>
-<a id="downloadLink" style="display:none;" download="audio.mp3">Descargar MP3</a>
+  <h1>Convertidor MP4 → MP3</h1>
+  <div class="drop-area" id="dropArea">
+    Arrastra tu archivo MP4 aquí o haz clic para seleccionar
+    <input type="file" id="fileInput" accept="video/mp4" style="display:none;">
+  </div>
+  <button id="convertBtn" disabled>Convertir a MP3</button>
+  <progress id="progressBar" value="0" max="100"></progress>
+  <a id="downloadLink" style="display:none;" download="audio.mp3">Descargar MP3</a>
 
-<script type="module">
-import { createFFmpeg, fetchFile } from "https://unpkg.com/@ffmpeg/ffmpeg@0.11.2/dist/ffmpeg.min.js";
+  <!-- Cargamos ffmpeg desde un CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.15/umd/ffmpeg.min.js"></script>
+  <script>
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
 
-const ffmpeg = createFFmpeg({ log: true });
-const fileInput = document.getElementById("fileInput");
-const convertBtn = document.getElementById("convertBtn");
-const progressBar = document.getElementById("progressBar");
-const downloadLink = document.getElementById("downloadLink");
+    const fileInput = document.getElementById("fileInput");
+    const dropArea = document.getElementById("dropArea");
+    const convertBtn = document.getElementById("convertBtn");
+    const progressBar = document.getElementById("progressBar");
+    const downloadLink = document.getElementById("downloadLink");
 
-let selectedFile = null;
+    let selectedFile = null;
 
-ffmpeg.setProgress(({ ratio }) => {
-  progressBar.value = ratio * 100;
-});
+    dropArea.addEventListener("click", () => fileInput.click());
+    dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("hover"); });
+    dropArea.addEventListener("dragleave", () => dropArea.classList.remove("hover"));
+    dropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropArea.classList.remove("hover");
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === "video/mp4") {
+        selectedFile = file;
+        convertBtn.disabled = false;
+      } else {
+        alert("Solo archivos MP4.");
+      }
+    });
 
-fileInput.addEventListener("change", (e) => {
-  if (e.target.files.length > 0) {
-    selectedFile = e.target.files[0];
-    convertBtn.disabled = false;
-  }
-});
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        selectedFile = e.target.files[0];
+        convertBtn.disabled = false;
+      }
+    });
 
-convertBtn.addEventListener("click", async () => {
-  if (!selectedFile) return alert("Selecciona un archivo MP4 primero.");
+    convertBtn.addEventListener("click", async () => {
+      if (!selectedFile) return alert("Selecciona un archivo MP4 primero.");
+      convertBtn.disabled = true;
+      downloadLink.style.display = "none";
+      progressBar.value = 0;
 
-  convertBtn.disabled = true;
-  progressBar.value = 0;
+      if (!ffmpeg.isLoaded()) await ffmpeg.load();
 
-  if (!ffmpeg.isLoaded()) await ffmpeg.load();
+      ffmpeg.FS("writeFile", "input.mp4", await fetchFile(selectedFile));
+      await ffmpeg.run("-i", "input.mp4", "-q:a", "0", "-map", "a", "output.mp3");
+      const data = ffmpeg.FS("readFile", "output.mp3");
 
-  ffmpeg.FS("writeFile", selectedFile.name, await fetchFile(selectedFile));
-  await ffmpeg.run("-i", selectedFile.name, "-q:a", "0", "-map", "a", "output.mp3");
-
-  const data = ffmpeg.FS("readFile", "output.mp3");
-  const url = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mp3" }));
-
-  downloadLink.href = url;
-  downloadLink.style.display = "block";
-  convertBtn.disabled = false;
-});
-</script>
+      const url = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mp3" }));
+      downloadLink.href = url;
+      downloadLink.style.display = "block";
+      convertBtn.disabled = false;
+    });
+  </script>
 </body>
 </html>
