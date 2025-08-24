@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Convertir MP4 → MP3 (prueba)</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convertidor MP4 → MP3</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 40px; background:#f5f5f5; }
     .container { background:#fff; padding:24px; border-radius:10px; display:inline-block; box-shadow:0 6px 18px rgba(0,0,0,.08); }
     .drop-area { width:380px; min-height:120px; border:2px dashed #aaa; border-radius:8px; display:flex; align-items:center; justify-content:center; margin:12px auto; cursor:pointer; }
     .drop-area.hover { background:#f0f0f0; border-color:#333; }
-    #fileInput { display: inline-block; margin-top:8px; } /* visible para pruebas */
-    button { padding:10px 16px; border-radius:6px; border:none; background:#007bff; color:#fff; cursor:pointer; }
+    button { padding:10px 16px; border-radius:6px; border:none; background:#007bff; color:#fff; cursor:pointer; margin-top:10px; }
     progress { width:100%; margin-top:14px; display:block; }
+    a { display:inline-block; margin-top:12px; color:green; font-weight:bold; }
+    #fileInput { display:none; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Convertidor MP4 → MP3 (prueba)</h2>
+    <h2>Convertidor MP4 → MP3</h2>
 
-    <!-- Zona de arrastre -->
     <div id="dropArea" class="drop-area">
-      Arrastra tu MP4 aquí o usa el botón "Seleccionar archivo".
+      Arrastra tu MP4 aquí o haz clic para seleccionar
     </div>
 
-    <!-- Archivo VISIBLE para pruebas + botón extra -->
     <input type="file" id="fileInput" accept="video/mp4">
-    <div style="margin-top:10px;">
-      <button id="selectBtn">Seleccionar archivo (abrir selector)</button>
-      <button id="convertBtn" disabled style="margin-left:8px;">Convertir a MP3</button>
+
+    <div>
+      <button id="convertBtn" disabled>Convertir a MP3</button>
     </div>
 
-    <progress id="progressBar" value="0" max="100" style="margin-top:12px;"></progress>
-    <a id="downloadLink" style="display:none; margin-top:12px;" download="audio.mp3">Descargar MP3</a>
+    <progress id="progressBar" value="0" max="100"></progress>
+    <a id="downloadLink" style="display:none;" download="audio.mp3">Descargar MP3</a>
     <div id="status" style="margin-top:8px;color:#333;"></div>
   </div>
 
-  <!-- CDN (prueba). Si falla, el selector seguirá funcionando; la conversión puede necesitar ajustes) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.15/umd/ffmpeg.min.js"></script>
+  <!-- FFmpeg oficial desde jsDelivr -->
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.7/dist/ffmpeg.min.js"></script>
 
   <script>
-    // Logs para depuración
-    console.log('Script cargado');
-
     const dropArea = document.getElementById('dropArea');
     const fileInput = document.getElementById('fileInput');
-    const selectBtn = document.getElementById('selectBtn');
     const convertBtn = document.getElementById('convertBtn');
     const progressBar = document.getElementById('progressBar');
     const downloadLink = document.getElementById('downloadLink');
@@ -52,32 +47,27 @@
 
     let selectedFile = null;
 
-    // Fallback: botón que abre el selector (si label o click no funcionan)
-    selectBtn.addEventListener('click', () => {
-      console.log('selectBtn click -> abrir selector');
-      fileInput.click();
-    });
-
     // Drag & drop
     dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('hover'); });
     dropArea.addEventListener('dragleave', () => dropArea.classList.remove('hover'));
     dropArea.addEventListener('drop', (e) => {
       e.preventDefault();
       dropArea.classList.remove('hover');
-      console.log('drop event', e.dataTransfer.files);
       if (e.dataTransfer.files && e.dataTransfer.files.length) {
         const f = e.dataTransfer.files[0];
-        if (f.type !== 'video/mp4') { alert('Solo MP4.'); return; }
+        if (f.type !== 'video/mp4') { alert('Solo MP4'); return; }
         selectedFile = f;
-        fileInput.files = e.dataTransfer.files; // sincroniza input
+        fileInput.files = e.dataTransfer.files;
         convertBtn.disabled = false;
         statusDiv.textContent = `Archivo listo: ${f.name}`;
       }
     });
 
-    // Cuando el input cambia
+    // Clic en dropArea abre selector
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    // Selección por input
     fileInput.addEventListener('change', (e) => {
-      console.log('fileInput change', e.target.files);
       if (e.target.files.length) {
         selectedFile = e.target.files[0];
         convertBtn.disabled = false;
@@ -85,43 +75,39 @@
       }
     });
 
-    // Click en la zona (también abre el selector)
-    dropArea.addEventListener('click', () => {
-      console.log('dropArea click -> intentar abrir selector');
-      fileInput.click();
-    });
-
-    // Conversión mínima (prueba). Si el CDN no carga, mostrará error en consola pero la selección seguirá funcionando.
     convertBtn.addEventListener('click', async () => {
       if (!selectedFile) { alert('Selecciona un MP4'); return; }
       convertBtn.disabled = true;
-      statusDiv.textContent = 'Inicializando FFmpeg...';
+      downloadLink.style.display = "none";
       progressBar.value = 0;
+      statusDiv.textContent = "Inicializando FFmpeg...";
 
       try {
-        // Si FFmpeg no está disponible, FFmpeg será undefined y esto fallará; atrapamos error.
-        const { createFFmpeg, fetchFile } = FFmpeg;
-        const ffmpeg = createFFmpeg({ log: true });
-        ffmpeg.setProgress(({ ratio }) => { progressBar.value = ratio * 100; });
+        const { createFFmpeg, fetchFile } = FFmpegWASM;
+        const ffmpeg = createFFmpeg({ log:true });
+        ffmpeg.setProgress(({ ratio }) => { progressBar.value = ratio*100; });
+
         if (!ffmpeg.isLoaded()) await ffmpeg.load();
-        statusDiv.textContent = 'Convirtiendo...';
-        await ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(selectedFile));
-        await ffmpeg.run('-i', 'input.mp4', '-q:a', '0', '-map', 'a', 'output.mp3');
-        const data = ffmpeg.FS('readFile', 'output.mp3');
-        const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mp3' }));
+
+        statusDiv.textContent = "Convirtiendo...";
+        await ffmpeg.FS("writeFile", "input.mp4", await fetchFile(selectedFile));
+
+        // Línea más confiable para convertir a MP3
+        await ffmpeg.run("-i", "input.mp4", "-vn", "-acodec", "mp3", "output.mp3");
+
+        const data = ffmpeg.FS("readFile", "output.mp3");
+        const url = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mp3" }));
         downloadLink.href = url;
-        downloadLink.style.display = 'inline';
-        statusDiv.textContent = 'Conversión lista';
+        downloadLink.style.display = "inline";
+        statusDiv.textContent = "Conversión lista";
       } catch (err) {
-        console.error('Error FFmpeg o CDN:', err);
-        statusDiv.textContent = 'Error en la conversión (revisa la consola).';
-        alert('Error en FFmpeg: mira la consola del navegador (F12 → Consola) y pégame los errores aquí.');
+        console.error("Error durante la conversión:", err);
+        statusDiv.textContent = "Error en la conversión (revisa la consola)";
+        alert("Ocurrió un error en la conversión. Mira la consola (F12) para detalles.");
       } finally {
         convertBtn.disabled = false;
       }
     });
-
-    console.log('ready');
   </script>
 </body>
 </html>
