@@ -17,9 +17,12 @@
 <body>
   <h1>Convertidor MP4 → MP3</h1>
   <div class="drop-area" id="dropArea">
+  <label for="fileInput" style="cursor:pointer; display:block;">
     Arrastra tu archivo MP4 aquí o haz clic para seleccionar
-    <input type="file" id="fileInput" accept="video/mp4" style="display:none;">
-  </div>
+  </label>
+  <input type="file" id="fileInput" accept="video/mp4" style="display:none;">
+</div>
+
   <button id="convertBtn" disabled>Convertir a MP3</button>
   <progress id="progressBar" value="0" max="100"></progress>
   <a id="downloadLink" style="display:none;" download="audio.mp3">Descargar MP3</a>
