@@ -1,8 +1,6 @@
 {
-  {
   "name": "conversor-mp4-a-mp3",
   "version": "1.0.0",
-  "description": "Convertidor online de MP4 a MP3 gratis con Node.js y FFmpeg",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -12,10 +10,6 @@
     "fluent-ffmpeg": "^2.1.2",
     "multer": "^1.4.5",
     "ws": "^8.17.0"
-  },
-  "engines": {
-    "node": "18.x"
-  },
-  "author": "Santo",
-  "license": "MIT"
+  }
 }
+
