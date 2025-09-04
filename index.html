@@ -5,36 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO -->
-    <title>Convertidor MP4 a MP3 Online Gratis y Rápido</title>
-    <meta name="description" content="Convierte tus videos MP4 a MP3 de manera rápida, segura y gratuita en línea. Compatible con móviles y ordenadores.">
-    <meta name="keywords" content="convertir mp4 a mp3, mp4 a mp3 online, extraer audio de mp4, convertir video a mp3 gratis, online">
-    <meta name="author" content="Tu Nombre o Marca">
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="Convertidor MP4 a MP3 Online Gratis y Rápido">
-    <meta property="og:description" content="Convierte tus videos MP4 a MP3 fácilmente y sin instalar programas. Online y gratuito.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tudominio.com">
-    <meta property="og:image" content="https://tudominio.com/preview.png">
+    <title>Convertidor MP4 a MP3 Online Gratis</title>
+    <meta name="description" content="Convierte tus videos MP4 a MP3 de forma rápida y gratuita en línea.">
+    <meta name="keywords" content="convertir mp4 a mp3, convertidor online, gratis, audio de video, extractor mp3">
+    <meta name="author" content="Santo">
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🎵 Convertidor <span>MP4 a MP3</span></h1>
-            <p>Convierte tus videos a audio de manera rápida, segura y online.</p>
-        </header>
+        <h1>🎵 Convertidor MP4 a MP3</h1>
 
         <!-- Zona de arrastrar y soltar -->
         <div id="drop-zone">
-            <p>Arrastra tu archivo MP4 aquí o haz clic para seleccionar</p>
+            Arrastra tu archivo MP4 aquí o haz clic para seleccionar
             <input type="file" id="file-input" accept=".mp4">
         </div>
 
         <!-- Botón de conversión -->
-        <button id="convert-btn" disabled>🚀 Convertir a MP3</button>
+        <button id="convert-btn" disabled>Convertir a MP3</button>
 
         <!-- Barra de progreso -->
         <div id="progress-container">
@@ -43,10 +33,6 @@
 
         <!-- Mensajes -->
         <p id="status"></p>
-
-        <footer>
-            <p>© 2025 Convertidor MP4 a MP3 Online - Todos los derechos reservados.</p>
-        </footer>
     </div>
 
     <!-- JS -->
@@ -63,18 +49,18 @@
         dropZone.addEventListener('dragover', (e) => e.preventDefault());
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            if(e.dataTransfer.files.length > 0) {
+            if (e.dataTransfer.files.length > 0) {
                 fileInput.files = e.dataTransfer.files;
                 handleFile(fileInput.files[0]);
             }
         });
 
         fileInput.addEventListener('change', () => {
-            if(fileInput.files.length > 0) handleFile(fileInput.files[0]);
+            if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
         });
 
         function handleFile(file) {
-            if(file.type !== "video/mp4") {
+            if (file.type !== "video/mp4") {
                 status.textContent = "Por favor, selecciona un archivo MP4 válido.";
                 convertBtn.disabled = true;
                 return;
@@ -88,20 +74,20 @@
         const ws = new WebSocket(`ws://${window.location.host}`);
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if(data.progress !== undefined) {
+            if (data.progress !== undefined) {
                 progressBar.style.width = data.progress + '%';
             }
         };
 
         // Botón de conversión
         convertBtn.addEventListener('click', async () => {
-            if(!selectedFile) return;
+            if (!selectedFile) return;
             convertBtn.disabled = true;
-            status.textContent = "Convirtiendo...";
+            status.textContent = "⏳ Convirtiendo...";
             progressBar.style.width = '0%';
 
             const formData = new FormData();
-            formData.append('video', selectedFile);
+            formData.append('file', selectedFile); // 🔥 FIX: ahora coincide con server.js
 
             try {
                 const response = await fetch('/convert', {
@@ -109,22 +95,24 @@
                     body: formData
                 });
 
-                if(!response.ok) throw new Error('Error durante la conversión.');
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
 
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = selectedFile.name.replace(/\.[^/.]+$/, "") + '.mp3';
+                a.download = 'audio.mp3';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
                 window.URL.revokeObjectURL(url);
 
-                status.textContent = "Conversión completada.";
-            } catch(err) {
+                status.textContent = "✅ Conversión completada.";
+            } catch (err) {
                 console.error(err);
-                status.textContent = "Ocurrió un error durante la conversión.";
+                status.textContent = "❌ Ocurrió un error durante la conversión.";
             } finally {
                 convertBtn.disabled = false;
             }
@@ -132,12 +120,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
 
