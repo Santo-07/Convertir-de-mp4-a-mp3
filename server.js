@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const multer = require("multer");
 const ffmpeg = require("fluent-ffmpeg");
@@ -7,23 +6,22 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-
-// Puerto configurable desde el entorno (Render) o 10000 por defecto
 const PORT = process.env.PORT || 10000;
 
 // Configurar ffmpeg
 ffmpeg.setFfmpegPath(ffmpegPath);
+console.log("FFmpeg path:", ffmpegPath);
 
 // Servir archivos estáticos
 app.use(express.static("public"));
 
-// Crear carpetas temporales si no existen
+// Crear carpetas temporales
 const uploadDir = path.join(__dirname, "tmp/uploads");
 const outputDir = path.join(__dirname, "tmp");
 fs.mkdirSync(uploadDir, { recursive: true });
 fs.mkdirSync(outputDir, { recursive: true });
 
-// Configuración de Multer para archivos grandes
+// Configuración de Multer
 const upload = multer({
   dest: uploadDir,
   limits: { fileSize: 200 * 1024 * 1024 } // 200 MB máximo
@@ -39,8 +37,7 @@ app.post("/convert", upload.single("file"), (req, res) => {
   ffmpeg(inputPath)
     .toFormat("mp3")
     .on("end", () => {
-      res.download(outputPath, "audio.mp3", (err) => {
-        // Limpiar archivos temporales
+      res.download(outputPath, "audio.mp3", () => {
         try { fs.unlinkSync(inputPath); } catch {}
         try { fs.unlinkSync(outputPath); } catch {}
       });
@@ -52,11 +49,10 @@ app.post("/convert", upload.single("file"), (req, res) => {
     .save(outputPath);
 });
 
-// Iniciar servidor y configurar timeouts largos para evitar disconnects
+// Servidor con host 0.0.0.0 y timeouts largos
 const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
 
-server.keepAliveTimeout = 120000; // 120 segundos
-server.headersTimeout = 120000;   // 120 segundos
-
+server.keepAliveTimeout = 120000; // 120 s
+server.headersTimeout = 120000;   // 120 s
