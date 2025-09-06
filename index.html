@@ -3,120 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎵 Convertidor MP4 a MP3</title>
+  <title>Convertidor MP4 a MP3</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-
     body {
-      background: linear-gradient(135deg, #6b73ff, #000dff);
+      background: #1a1a2e;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       color: #fff;
     }
-
     .container {
-      background: rgba(255,255,255,0.05);
-      padding: 2.5rem;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 450px;
-      text-align: center;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    #drop-zone {
-      border: 2px dashed #fff;
-      border-radius: 15px;
+      background: #162447;
       padding: 2rem;
-      margin-bottom: 1rem;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      color: #e43f5a;
+    }
+    #drop-zone {
+      border: 2px dashed #e43f5a;
+      border-radius: 12px;
+      padding: 2rem;
       cursor: pointer;
+      margin-bottom: 1rem;
       transition: background 0.3s, border-color 0.3s;
     }
-
-    #drop-zone:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: #fffa;
-    }
-
-    #drop-zone input {
-      display: none;
-    }
+    #drop-zone:hover { background: rgba(228,63,90,0.1); }
+    #drop-zone input { display: none; }
 
     #convert-btn {
-      background: #ff9a3c;
+      background: #e43f5a;
       border: none;
-      padding: 0.75rem 1.5rem;
+      padding: 0.8rem 1.5rem;
       font-size: 1rem;
       font-weight: 600;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
       margin-bottom: 1rem;
     }
-
-    #convert-btn:disabled {
-      background: #ffa77680;
-      cursor: not-allowed;
-    }
-
-    #convert-btn:hover:not(:disabled) {
-      background: #ff7c00;
-      transform: scale(1.05);
-    }
+    #convert-btn:disabled { background: #e43f5a80; cursor: not-allowed; }
+    #convert-btn:hover:not(:disabled) { background: #ff6b81; transform: scale(1.05); }
 
     #progress-container {
-      background: rgba(255,255,255,0.1);
-      height: 10px;
+      background: #e43f5a33;
+      height: 12px;
       width: 100%;
-      border-radius: 5px;
+      border-radius: 6px;
       overflow: hidden;
       margin-bottom: 1rem;
     }
-
     #progress-bar {
       width: 0%;
       height: 100%;
-      background: #ff9a3c;
+      background: #ff6b81;
       transition: width 0.3s;
     }
 
     #status {
-      font-size: 0.9rem;
       min-height: 1.2rem;
+      font-size: 0.9rem;
     }
 
     footer {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       font-size: 0.8rem;
-      color: rgba(255,255,255,0.7);
+      color: #bbb;
     }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <h1>🎵 Convertidor MP4 a MP3</h1>
-
+    <h1>🎵 MP4 → MP3</h1>
     <div id="drop-zone">
       Arrastra tu archivo MP4 aquí o haz clic para seleccionar
       <input type="file" id="file-input" accept=".mp4">
     </div>
-
     <button id="convert-btn" disabled>Convertir a MP3</button>
-
     <div id="progress-container">
       <div id="progress-bar"></div>
     </div>
-
     <p id="status"></p>
     <footer>Creado por Santo · Gratis y online</footer>
   </div>
@@ -175,6 +150,7 @@
         window.URL.revokeObjectURL(url);
 
         status.textContent = "✅ Conversión completada.";
+        progressBar.style.width = '100%';
       } catch (err) {
         console.error(err);
         status.textContent = "❌ Ocurrió un error durante la conversión.";
