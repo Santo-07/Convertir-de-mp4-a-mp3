@@ -1,70 +1,43 @@
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-const convertBtn = document.getElementById('convert-btn');
-const progressBar = document.getElementById('progress-bar');
-const status = document.getElementById('status');
-let selectedFile = null;
+const express = require("express");
+const multer = require("multer");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
+const path = require("path");
+const fs = require("fs");
 
-// Manejo de arrastrar y soltar
-dropZone.addEventListener('click', () => fileInput.click());
-dropZone.addEventListener('dragover', (e) => e.preventDefault());
-dropZone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  if (e.dataTransfer.files.length > 0) {
-    fileInput.files = e.dataTransfer.files;
-    handleFile(fileInput.files[0]);
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+app.use(express.static("public"));
+
+const uploadDir = path.join(__dirname, "tmp/uploads");
+const outputDir = path.join(__dirname, "tmp");
+fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(outputDir, { recursive: true });
+
+const upload = multer({ dest: uploadDir });
+
+app.post("/convert", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).send("No se subió ningún archivo.");
+
+  const inputPath = req.file.path;
+  const outputPath = path.join(outputDir, `${req.file.filename}.mp3`);
+
+  ffmpeg(inputPath)
+    .toFormat("mp3")
+    .on("end", () => {
+      res.download(outputPath, "audio.mp3", () => {
+        fs.unlinkSync(inputPath);
+        fs.unlinkSync(outputPath);
+      });
+    })
+    .on("error", (err) => {
+      console.error("Error en la conversión:", err);
+      res.status(500).send("Error al convertir el archivo.");
+    })
+    .save(outputPath);
 });
 
-fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
-});
-
-function handleFile(file) {
-  if (file.type !== "video/mp4") {
-    status.textContent = "Por favor, selecciona un archivo MP4 válido.";
-    convertBtn.disabled = true;
-    return;
-  }
-  selectedFile = file;
-  status.textContent = `Archivo listo: ${file.name}`;
-  convertBtn.disabled = false;
-}
-
-// Botón de conversión
-convertBtn.addEventListener('click', async () => {
-  if (!selectedFile) return;
-  convertBtn.disabled = true;
-  status.textContent = "⏳ Convirtiendo...";
-  progressBar.style.width = '0%';
-
-  const formData = new FormData();
-  formData.append('file', selectedFile);
-
-  try {
-    const response = await fetch('/convert', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) throw new Error(await response.text());
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'audio.mp3';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-
-    status.textContent = "✅ Conversión completada.";
-  } catch (err) {
-    console.error(err);
-    status.textContent = "❌ Ocurrió un error durante la conversión.";
-  } finally {
-    convertBtn.disabled = false;
-  }
-});
+app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
 
