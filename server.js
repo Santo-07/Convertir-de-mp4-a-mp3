@@ -1,89 +1,70 @@
-const express = require('express');
-const multer = require('multer');
-const ffmpeg = require('fluent-ffmpeg');
-const path = require('path');
-const fs = require('fs');
-const http = require('http');
-const WebSocket = require('ws');
+require('dotenv').config();
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
+const { OpenAI } = require("openai");
 
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-const PORT = 3000;
+const PORT = process.env.PORT || 10000;
 
-// ------------------------------
-// CONFIGURAR FFmpeg
-// ------------------------------
-const ffmpegPath = "C:\\Users\\santo\\Downloads\\ffmpeg\\ffmpeg\\bin\\ffmpeg.exe";
+// OpenAI
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// FFmpeg path
 ffmpeg.setFfmpegPath(ffmpegPath);
 
+// Carpetas temporales
+const uploadDir = path.join(__dirname, "tmp/uploads");
+fs.mkdirSync(uploadDir, { recursive: true });
 
-// ------------------------------
-// Carpetas necesarias
-// ------------------------------
-const uploadsDir = path.resolve(__dirname, 'uploads');
-const convertedDir = path.resolve(__dirname, 'converted');
-
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-if (!fs.existsSync(convertedDir)) fs.mkdirSync(convertedDir);
-
-// ------------------------------
-// Servir archivos estáticos (frontend)
-// ------------------------------
-app.use(express.static(path.resolve(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+// Multer
+const upload = multer({
+  dest: uploadDir,
+  limits: { fileSize: 200 * 1024 * 1024 } // 200MB max
 });
 
-// ------------------------------
-// Configurar multer para subir archivos
-// ------------------------------
-const upload = multer({ dest: uploadsDir });
+app.use(express.static("public"));
 
-// ------------------------------
-// WebSocket: progreso
-// ------------------------------
-let sockets = [];
-wss.on('connection', (ws) => {
-    sockets.push(ws);
-    ws.on('close', () => {
-        sockets = sockets.filter(s => s !== ws);
+app.post("/transcribe", upload.single("file"), async (req, res) => {
+  if (!req.file) return res.status(400).send("No se subió ningún archivo.");
+
+  const inputPath = req.file.path;
+  const outputPath = inputPath + ".wav";
+
+  try {
+    // Convertir MP4 a WAV usando FFmpeg
+    await new Promise((resolve, reject) => {
+      ffmpeg(inputPath)
+        .toFormat("wav")
+        .on("end", resolve)
+        .on("error", reject)
+        .save(outputPath);
     });
+
+    // Transcribir usando OpenAI Whisper
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(outputPath),
+      model: "whisper-1"
+    });
+
+    res.json({ text: transcription.text });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al transcribir el archivo.");
+  } finally {
+    try { fs.unlinkSync(inputPath); } catch {}
+    try { fs.unlinkSync(outputPath); } catch {}
+  }
 });
 
-// ------------------------------
-// Endpoint de conversión
-// ------------------------------
-app.post('/convert', upload.single('video'), (req, res) => {
-    if (!req.file) return res.status(400).send('No se subió ningún archivo.');
-
-    const inputFile = path.resolve(req.file.path);
-    const outputFile = path.resolve(convertedDir, `${req.file.filename}.mp3`);
-
-    console.log('Archivo de entrada:', inputFile);
-    console.log('Archivo de salida:', outputFile);
-
-    ffmpeg(inputFile)
-        .toFormat('mp3')
-        .on('progress', (p) => {
-            const percent = Math.floor(p.percent);
-            sockets.forEach(ws => ws.send(JSON.stringify({ progress: percent })));
-        })
-        .on('end', () => {
-            res.download(outputFile, 'audio.mp3', () => {
-                try { fs.unlinkSync(inputFile); } catch(e) {}
-                try { fs.unlinkSync(outputFile); } catch(e) {}
-            });
-        })
-        .on('error', (err) => {
-            console.error('Error de FFmpeg:', err.message);
-            res.status(500).send('Error al convertir el archivo: ' + err.message);
-        })
-        .save(outputFile);
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
 
-// ------------------------------
-// Iniciar servidor
-// ------------------------------
-server.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
+server.keepAliveTimeout = 120000;
+server.headersTimeout = 120000;
+
