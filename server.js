@@ -10,32 +10,33 @@ const { OpenAI } = require("openai");
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// OpenAI
+// Configurar OpenAI
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// FFmpeg path
+// Configurar ffmpeg
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 // Carpetas temporales
-const uploadDir = path.join(__dirname, "tmp/uploads");
+const uploadDir = path.join(__dirname, "uploads");
+const convertedDir = path.join(__dirname, "converted");
 fs.mkdirSync(uploadDir, { recursive: true });
+fs.mkdirSync(convertedDir, { recursive: true });
 
-// Multer
-const upload = multer({
-  dest: uploadDir,
-  limits: { fileSize: 200 * 1024 * 1024 } // 200MB max
-});
+// Multer para subida de archivos
+const upload = multer({ dest: uploadDir });
 
-app.use(express.static("public"));
+// Servir archivos estáticos desde la raíz
+app.use(express.static(__dirname));
 
+// Endpoint para transcribir MP4 a texto
 app.post("/transcribe", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).send("No se subió ningún archivo.");
 
   const inputPath = req.file.path;
-  const outputPath = inputPath + ".wav";
+  const outputPath = path.join(convertedDir, req.file.filename + ".wav");
 
   try {
-    // Convertir MP4 a WAV usando FFmpeg
+    // Convertir MP4 a WAV
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
         .toFormat("wav")
@@ -44,7 +45,7 @@ app.post("/transcribe", upload.single("file"), async (req, res) => {
         .save(outputPath);
     });
 
-    // Transcribir usando OpenAI Whisper
+    // Transcribir con OpenAI Whisper
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(outputPath),
       model: "whisper-1"
@@ -61,10 +62,12 @@ app.post("/transcribe", upload.single("file"), async (req, res) => {
   }
 });
 
+// Iniciar servidor
 const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
 
+// Timeouts largos para archivos grandes
 server.keepAliveTimeout = 120000;
 server.headersTimeout = 120000;
 
