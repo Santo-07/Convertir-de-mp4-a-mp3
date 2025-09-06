@@ -1,123 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- SEO -->
-    <title>Convertidor MP4 a MP3 Online Gratis</title>
-    <meta name="description" content="Convierte tus videos MP4 a MP3 de forma rápida y gratuita en línea.">
-    <meta name="keywords" content="convertir mp4 a mp3, convertidor online, gratis, audio de video, extractor mp3">
-    <meta name="author" content="Santo">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convertidor MP4 a MP3</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🎵 Convertidor MP4 a MP3</h1>
+  <div class="container">
+    <h1>🎵 Convertidor MP4 a MP3</h1>
 
-        <!-- Zona de arrastrar y soltar -->
-        <div id="drop-zone">
-            Arrastra tu archivo MP4 aquí o haz clic para seleccionar
-            <input type="file" id="file-input" accept=".mp4">
-        </div>
-
-        <!-- Botón de conversión -->
-        <button id="convert-btn" disabled>Convertir a MP3</button>
-
-        <!-- Barra de progreso -->
-        <div id="progress-container">
-            <div id="progress-bar"></div>
-        </div>
-
-        <!-- Mensajes -->
-        <p id="status"></p>
+    <div id="drop-zone">
+      Arrastra tu archivo MP4 aquí o haz clic para seleccionar
+      <input type="file" id="file-input" accept=".mp4">
     </div>
 
-    <!-- JS -->
-    <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const convertBtn = document.getElementById('convert-btn');
-        const progressBar = document.getElementById('progress-bar');
-        const status = document.getElementById('status');
-        let selectedFile = null;
+    <button id="convert-btn" disabled>Convertir a MP3</button>
 
-        // Arrastrar y soltar
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => e.preventDefault());
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files;
-                handleFile(fileInput.files[0]);
-            }
-        });
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
 
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
-        });
+    <p id="status"></p>
+  </div>
 
-        function handleFile(file) {
-            if (file.type !== "video/mp4") {
-                status.textContent = "Por favor, selecciona un archivo MP4 válido.";
-                convertBtn.disabled = true;
-                return;
-            }
-            selectedFile = file;
-            status.textContent = `Archivo listo: ${file.name}`;
-            convertBtn.disabled = false;
-        }
-
-        // WebSocket para progreso
-        const ws = new WebSocket(`ws://${window.location.host}`);
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.progress !== undefined) {
-                progressBar.style.width = data.progress + '%';
-            }
-        };
-
-        // Botón de conversión
-        convertBtn.addEventListener('click', async () => {
-            if (!selectedFile) return;
-            convertBtn.disabled = true;
-            status.textContent = "⏳ Convirtiendo...";
-            progressBar.style.width = '0%';
-
-            const formData = new FormData();
-            formData.append('file', selectedFile); // 🔥 FIX: ahora coincide con server.js
-
-            try {
-                const response = await fetch('/convert', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error(await response.text());
-                }
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'audio.mp3';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
-
-                status.textContent = "✅ Conversión completada.";
-            } catch (err) {
-                console.error(err);
-                status.textContent = "❌ Ocurrió un error durante la conversión.";
-            } finally {
-                convertBtn.disabled = false;
-            }
-        });
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
-
