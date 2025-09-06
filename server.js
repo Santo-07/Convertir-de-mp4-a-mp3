@@ -1,15 +1,15 @@
 const express = require("express");
 const multer = require("multer");
 const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require("ffmpeg-static");
 const path = require("path");
 const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurar rutas de ffmpeg para Render
-ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
-ffmpeg.setFfprobePath("/usr/bin/ffprobe");
+// Configurar ffmpeg para que use el binario incluido en ffmpeg-static
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 // Middleware para servir archivos estáticos (HTML, CSS, JS)
 app.use(express.static("public"));
@@ -41,7 +41,6 @@ app.post("/convert", upload.single("file"), (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en puerto ${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-
 
