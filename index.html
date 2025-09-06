@@ -1,85 +1,87 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertidor MP4 a MP3</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Convertidor MP4 a MP3 Pro</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <h1>🎵 Convertidor MP4 a MP3</h1>
-    <div id="drop-zone">
-        Arrastra tu archivo MP4 aquí o haz clic para seleccionar
-        <input type="file" id="file-input" accept=".mp4">
-    </div>
-    <button id="convert-btn" disabled>Convertir a MP3</button>
-    <div id="progress-container">
-        <div id="progress-bar"></div>
-    </div>
+<div class="converter-box">
+    <h1>Convertidor MP4 a MP3</h1>
+
+    <div id="dropZone">Arrastra y suelta tu archivo MP4 aquí</div>
+    <input type="file" id="videoInput" accept="video/mp4">
+
+    <button id="convertBtn">Convertir a MP3</button>
     <p id="status"></p>
+
+    <div class="progress-bar">
+        <div class="progress-bar-inner" id="progressInner">0%</div>
+    </div>
 </div>
 
 <script>
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-const convertBtn = document.getElementById('convert-btn');
-const progressBar = document.getElementById('progress-bar');
+const dropZone = document.getElementById('dropZone');
+const videoInput = document.getElementById('videoInput');
+const convertBtn = document.getElementById('convertBtn');
 const status = document.getElementById('status');
+const progressInner = document.getElementById('progressInner');
+
 let selectedFile = null;
 
-// Arrastrar y soltar
-dropZone.addEventListener('click', () => fileInput.click());
-dropZone.addEventListener('dragover', e => e.preventDefault());
-dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
-});
-
-fileInput.addEventListener('change', () => {
-    if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
-});
-
-function handleFile(file) {
-    if (file.type !== "video/mp4") {
-        status.textContent = "Por favor, selecciona un archivo MP4 válido.";
-        convertBtn.disabled = true;
-        return;
+// WebSocket para progreso
+const ws = new WebSocket(`ws://${window.location.host}`);
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.progress !== undefined) {
+        progressInner.style.width = data.progress + '%';
+        progressInner.textContent = data.progress + '%';
     }
-    selectedFile = file;
-    status.textContent = `Archivo listo: ${file.name}`;
-    convertBtn.disabled = false;
-}
+};
 
+// Arrastrar y soltar
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    selectedFile = e.dataTransfer.files[0];
+    if(selectedFile && selectedFile.type === "video/mp4") dropZone.textContent = selectedFile.name;
+});
+
+// Click en dropZone abre selector de archivos
+dropZone.addEventListener('click', () => videoInput.click());
+videoInput.addEventListener('change', () => { selectedFile = videoInput.files[0]; dropZone.textContent = selectedFile.name; });
+
+// Botón de conversión
 convertBtn.addEventListener('click', async () => {
-    if (!selectedFile) return;
-    convertBtn.disabled = true;
-    status.textContent = "⏳ Convirtiendo...";
-    progressBar.style.width = '0%';
+    if (!selectedFile) { status.textContent = "Selecciona un archivo MP4 primero."; return; }
 
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('video', selectedFile);
+
+    status.textContent = 'Convirtiendo...';
+    progressInner.style.width = '0%';
+    progressInner.textContent = '0%';
 
     try {
         const response = await fetch('/convert', { method: 'POST', body: formData });
-        if (!response.ok) throw new Error(await response.text());
+        if (!response.ok) throw new Error('Error en la conversión');
 
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'audio.mp3';
-        document.body.appendChild(a);
         a.click();
-        a.remove();
         window.URL.revokeObjectURL(url);
 
-        status.textContent = "✅ Conversión completada.";
+        status.textContent = '¡Conversión completa!';
+        progressInner.style.width = '100%';
+        progressInner.textContent = '100%';
     } catch (err) {
         console.error(err);
-        status.textContent = "❌ Ocurrió un error durante la conversión.";
-    } finally {
-        convertBtn.disabled = false;
+        status.textContent = 'Ocurrió un error durante la conversión.';
     }
 });
 </script>
