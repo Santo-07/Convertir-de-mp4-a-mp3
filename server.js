@@ -1,73 +1,66 @@
-require('dotenv').config();
-const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-const ffmpeg = require("fluent-ffmpeg");
-const ffmpegPath = require("ffmpeg-static");
-const { OpenAI } = require("openai");
-
-const app = express();
-const PORT = process.env.PORT || 10000;
-
-// Configurar OpenAI
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// Configurar ffmpeg
-ffmpeg.setFfmpegPath(ffmpegPath);
-
-// Carpetas temporales
-const uploadDir = path.join(__dirname, "uploads");
-const convertedDir = path.join(__dirname, "converted");
-fs.mkdirSync(uploadDir, { recursive: true });
-fs.mkdirSync(convertedDir, { recursive: true });
-
-// Multer para subida de archivos
-const upload = multer({ dest: uploadDir });
-
-// Servir archivos estáticos desde la raíz
-app.use(express.static(__dirname));
-
-// Endpoint para transcribir MP4 a texto
-app.post("/transcribe", upload.single("file"), async (req, res) => {
-  if (!req.file) return res.status(400).send("No se subió ningún archivo.");
-
-  const inputPath = req.file.path;
-  const outputPath = path.join(convertedDir, req.file.filename + ".wav");
-
-  try {
-    // Convertir MP4 a WAV
-    await new Promise((resolve, reject) => {
-      ffmpeg(inputPath)
-        .toFormat("wav")
-        .on("end", resolve)
-        .on("error", reject)
-        .save(outputPath);
-    });
-
-    // Transcribir con OpenAI Whisper
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(outputPath),
-      model: "whisper-1"
-    });
-
-    res.json({ text: transcription.text });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al transcribir el archivo.");
-  } finally {
-    try { fs.unlinkSync(inputPath); } catch {}
-    try { fs.unlinkSync(outputPath); } catch {}
+// Modo oscuro / claro con persistencia
+(function theme(){
+  const btn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const KEY = 'theme-preference';
+  function set(dark){
+    root.dataset.theme = dark ? 'dark' : 'light';
+    localStorage.setItem(KEY, dark ? 'dark' : 'light');
   }
-});
+  // inicial
+  const stored = localStorage.getItem(KEY);
+  const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  set(stored ? stored === 'dark' : prefers);
 
-// Iniciar servidor
-const server = app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
-});
+  btn?.addEventListener('click', ()=>{
+    set((root.dataset.theme || 'dark') !== 'dark');
+    btn.textContent = (root.dataset.theme === 'dark') ? '🌙' : '☀️';
+  });
+})();
 
-// Timeouts largos para archivos grandes
-server.keepAliveTimeout = 120000;
-server.headersTimeout = 120000;
+// Menú móvil
+(function nav(){
+  const toggle = document.querySelector('.nav__toggle');
+  const menu = document.getElementById('menu');
+  toggle?.addEventListener('click', ()=>{
+    const open = menu.classList.toggle('show');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+})();
 
+// Búsqueda interna (filtra tarjetas por data-tags y texto)
+(function search(){
+  const input = document.getElementById('searchInput');
+  const cards = [...document.querySelectorAll('#cardsGrid .card')];
+  if(!input || !cards.length) return;
+
+  function normalize(s){ return s.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+
+  input.addEventListener('input', ()=>{
+    const q = normalize(input.value.trim());
+    cards.forEach(card=>{
+      const text = normalize(card.textContent + ' ' + (card.dataset.tags || ''));
+      const show = !q || text.includes(q);
+      card.style.display = show ? '' : 'none';
+    });
+  });
+})();
+
+// Efecto reveal al hacer scroll (mejora UX)
+(function reveal(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.opacity = '1';
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:.12});
+  document.querySelectorAll('.card,.longform,.deal,.faq__item').forEach(el=>{
+    el.style.transform='translateY(18px)';
+    el.style.opacity='.001';
+    el.style.transition='all .6s cubic-bezier(.2,.7,.1,1)';
+    obs.observe(el);
+  });
+})();
