@@ -3,172 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GadgetPulse 2025 – Los Mejores Gadgets y Reviews</title>
-<meta name="description" content="Descubre los gadgets más populares de 2025: teléfonos, auriculares, smartwatches y tablets. Reviews, comparaciones y guías de compra.">
-<meta name="keywords" content="gadgets 2025, teléfonos, tablets, auriculares, smartwatches, reviews, tecnología, comparativas">
-<link rel="stylesheet" href="style.css">
+<title>GadgetPulse 2025 – Lo Mejor en Gadgets y Reviews</title>
+<meta name="description" content="Descubre los gadgets más buscados de 2025: smartphones, tablets, smartwatches y auriculares. Comparativas, reviews y guías de compra.">
+<meta name="keywords" content="gadgets 2025, smartphones, tablets, smartwatches, auriculares, tecnología, reviews, comparativas">
 <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f5f5;
-  margin:0;
-  color:#333;
-}
+/* Reset y base */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f4f8; color:#333; line-height:1.6; }
 .container { max-width:1200px; margin:auto; padding:20px; }
-h1 { text-align:center; margin-bottom:50px; color:#1a73e8; font-size:2.8em; }
-section { margin-bottom:70px; }
-h2 { border-bottom:3px solid #1a73e8; padding-bottom:10px; margin-bottom:25px; color:#1a73e8; font-size:2em; }
-.article-item {
-  display:flex;
-  flex-direction:row;
-  gap:25px;
+h1,h2,h3 { color:#1a73e8; }
+h1 { text-align:center; font-size:3em; margin-bottom:50px; }
+h2 { border-bottom:3px solid #1a73e8; padding-bottom:10px; margin-bottom:25px; font-size:2em; }
+h3 { font-size:1.5em; margin-bottom:10px; }
+
+/* Grid avanzado */
+section { margin-bottom:60px; }
+.articles-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; }
+
+/* Tarjetas */
+.card {
   background:#fff;
-  padding:25px;
-  margin-bottom:25px;
   border-radius:15px;
+  overflow:hidden;
   box-shadow:0 6px 20px rgba(0,0,0,0.12);
-  align-items:center;
   transition: transform 0.4s, box-shadow 0.4s;
+  display:flex;
+  flex-direction:column;
 }
-.article-item:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.18); }
-.article-item img { width:180px; height:auto; border-radius:15px; object-fit:cover; }
-.article-item h3 { margin-top:0; color:#1a73e8; font-size:1.5em; }
-.article-item p { margin:8px 0; line-height:1.6; }
-.read-more { background:#1a73e8; color:#fff; border:none; padding:10px 18px; border-radius:10px; cursor:pointer; transition: background 0.3s; font-size:1em; }
+.card:hover { transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,0.18); }
+.card img { width:100%; height:200px; object-fit:cover; }
+.card-content { padding:20px; flex-grow:1; display:flex; flex-direction:column; justify-content:space-between; }
+.card-content p { margin-bottom:15px; color:#555; }
+
+/* Botones */
+.read-more {
+  background:#1a73e8; color:#fff; border:none; padding:10px 18px; border-radius:10px; cursor:pointer;
+  font-size:1em; transition: background 0.3s;
+}
 .read-more:hover { background:#155ab6; }
-.more-text { margin-top:12px; color:#555; line-height:1.6; display:none; }
-@media(max-width:768px){ 
-  .article-item { flex-direction:column; text-align:center; }
-  .article-item img { width:100%; max-width:280px; margin-bottom:15px; }
-}
+
+/* Texto expandible */
+.more-text { display:none; margin-top:10px; color:#555; line-height:1.6; transition: all 0.3s ease; }
+
+/* Responsive */
+@media(max-width:768px){ .card img { height:180px; } }
 </style>
 </head>
 <body>
 
 <header class="container">
-  <h1>🌟 GadgetPulse 2025 – Lo Mejor en Tecnología</h1>
+  <h1>🌟 GadgetPulse 2025</h1>
+  <p style="text-align:center; font-size:1.2em; color:#555; margin-bottom:40px;">Descubre los gadgets más populares y las mejores reseñas para 2025.</p>
 </header>
 
 <main class="container">
 
-  <!-- Teléfonos -->
+  <!-- Smartphones -->
   <section>
-    <h2>📱 Teléfonos Destacados</h2>
+    <h2>📱 Smartphones Destacados</h2>
+    <div class="articles-grid">
 
-    <article class="article-item">
-      <img src="storresjayrmx-V35fOJJyhRo-unsplash.jpg" alt="iPhone 15 Pro Max" loading="lazy">
-      <div>
-        <h3>iPhone 15 Pro Max</h3>
-        <p>El iPhone más avanzado, ideal para fotografía profesional y gaming.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Chip A17 Bionic, cámara triple de 48 MP, pantalla Super Retina XDR. Rendimiento premium y funciones de IA integradas en iOS 18.</p>
+      <div class="card">
+        <img src="storresjayrmx-V35fOJJyhRo-unsplash.jpg" alt="iPhone 15 Pro Max" loading="lazy">
+        <div class="card-content">
+          <h3>iPhone 15 Pro Max</h3>
+          <p>El iPhone más avanzado con fotografía profesional y rendimiento extremo.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Chip A17 Bionic, pantalla Super Retina XDR, triple cámara de 48MP. iOS 18 con IA integrada y funciones exclusivas para productividad y entretenimiento.</p>
+        </div>
       </div>
-    </article>
 
-    <article class="article-item">
-      <img src="kadyn-pierce-4PsncrzCqVk-unsplash.jpg" alt="Samsung Galaxy S25" loading="lazy">
-      <div>
-        <h3>Samsung Galaxy S25</h3>
-        <p>Potente smartphone con pantalla AMOLED de 120 Hz y cámara nocturna excelente.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Procesador Exynos 2400, conectividad 5G avanzada, batería de larga duración. Perfecto para multitarea y streaming de calidad.</p>
+      <div class="card">
+        <img src="kadyn-pierce-4PsncrzCqVk-unsplash.jpg" alt="Samsung Galaxy S25" loading="lazy">
+        <div class="card-content">
+          <h3>Samsung Galaxy S25</h3>
+          <p>Potente smartphone con pantalla AMOLED 120Hz y cámara nocturna avanzada.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Procesador Exynos 2400, batería de larga duración, conectividad 5G. Ideal para multitarea, gaming y streaming de alta calidad.</p>
+        </div>
       </div>
-    </article>
 
-    <article class="article-item">
-      <img src="samuel-angor-PJt3gKDVuTU-unsplash.jpg" alt="Google Pixel 8 Pro" loading="lazy">
-      <div>
-        <h3>Google Pixel 8 Pro</h3>
-        <p>Smartphone con la mejor IA integrada para fotografía y traducción instantánea.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Cámara con procesamiento computacional avanzado. Android puro con actualizaciones directas de Google.</p>
+      <div class="card">
+        <img src="samuel-angor-PJt3gKDVuTU-unsplash.jpg" alt="Google Pixel 8 Pro" loading="lazy">
+        <div class="card-content">
+          <h3>Google Pixel 8 Pro</h3>
+          <p>Smartphone con la mejor IA para fotografía y traducción instantánea.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Cámara avanzada con procesamiento computacional, Android puro con actualizaciones directas, ideal para usuarios que buscan software limpio y potente.</p>
+        </div>
       </div>
-    </article>
-  </section>
 
-  <!-- Auriculares -->
-  <section>
-    <h2>🎧 Auriculares y Audio</h2>
-
-    <article class="article-item">
-      <img src="descarga.jpg" alt="Sony WH-1000XM5" loading="lazy">
-      <div>
-        <h3>Sony WH-1000XM5</h3>
-        <p>Auriculares con cancelación de ruido líder para música y viajes.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Sonido Hi-Res, conectividad multipunto, 30 horas de batería. Ideales para trabajo remoto y ocio.</p>
-      </div>
-    </article>
-
-    <article class="article-item">
-      <img src="zana-latif-TnDTzDiJbJo-unsplash.jpg" alt="AirPods Pro 2" loading="lazy">
-      <div>
-        <h3>AirPods Pro 2</h3>
-        <p>Auriculares inalámbricos con cancelación activa de ruido y sonido envolvente.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Control táctil avanzado, carga rápida, comodidad y calidad de sonido premium.</p>
-      </div>
-    </article>
-
-    <article class="article-item">
-      <img src="kofi-nartey-SHEUuUAZrDE-unsplash.jpg" alt="Bose QuietComfort 45" loading="lazy">
-      <div>
-        <h3>Bose QuietComfort 45</h3>
-        <p>Auriculares cómodos con aislamiento de sonido profesional.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Sonido equilibrado y diseño ergonómico, ideal para largas jornadas de trabajo o ocio.</p>
-      </div>
-    </article>
-  </section>
-
-  <!-- Smartwatches -->
-  <section>
-    <h2>⌚ Smartwatches</h2>
-
-    <article class="article-item">
-      <img src="LD0006065047.jpg" alt="Apple Watch Series 9" loading="lazy">
-      <div>
-        <h3>Apple Watch Series 9</h3>
-        <p>Smartwatch con seguimiento de salud avanzado y funciones de fitness completas.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Monitoreo de ritmo cardíaco, oxígeno en sangre y sueño. Perfecto para mantener la salud bajo control con iPhone.</p>
-      </div>
-    </article>
-
-    <article class="article-item">
-      <img src="images.jpg" alt="Samsung Galaxy Watch 6" loading="lazy">
-      <div>
-        <h3>Samsung Galaxy Watch 6</h3>
-        <p>Smartwatch versátil con seguimiento de fitness y salud para Android.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Seguimiento de ejercicio, frecuencia cardíaca, sueño y GPS. Resistente al agua y compatible con varios dispositivos Android.</p>
-      </div>
-    </article>
+    </div>
   </section>
 
   <!-- Tablets -->
   <section>
     <h2>💻 Tablets Populares</h2>
+    <div class="articles-grid">
 
-    <article class="article-item">
-      <img src="descarga (1).jpg" alt="iPad Pro 2025" loading="lazy">
-      <div>
-        <h3>iPad Pro 2025</h3>
-        <p>Tablet profesional con pantalla Liquid Retina y rendimiento increíble.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Chip M3, pantalla ProMotion 120Hz, compatible con Apple Pencil. Ideal para diseño gráfico, edición de video y productividad máxima.</p>
+      <div class="card">
+        <img src="descarga (1).jpg" alt="iPad Pro 2025" loading="lazy">
+        <div class="card-content">
+          <h3>iPad Pro 2025</h3>
+          <p>Tablet profesional con pantalla Liquid Retina y rendimiento superior.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Chip M3, ProMotion 120Hz, Apple Pencil compatible. Ideal para diseño gráfico, edición de video y productividad máxima.</p>
+        </div>
       </div>
-    </article>
 
-    <article class="article-item">
-      <img src="descarga (2) - copia.jpg" alt="Samsung Galaxy Tab S9" loading="lazy">
-      <div>
-        <h3>Samsung Galaxy Tab S9</h3>
-        <p>Tablet Android de alta gama para productividad y entretenimiento.</p>
-        <button class="read-more" onclick="toggleText(this)">Leer más</button>
-        <p class="more-text">Pantalla AMOLED 120Hz, procesador Snapdragon 8 Gen 3, S-Pen incluido. Perfecta para multitarea y streaming de contenido.</p>
+      <div class="card">
+        <img src="descarga (2) - copia.jpg" alt="Samsung Galaxy Tab S9" loading="lazy">
+        <div class="card-content">
+          <h3>Samsung Galaxy Tab S9</h3>
+          <p>Tablet Android premium para productividad y entretenimiento.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Pantalla AMOLED 120Hz, procesador Snapdragon 8 Gen 3, S-Pen incluido. Perfecta para multitarea, notas y streaming de contenido.</p>
+        </div>
       </div>
-    </article>
+
+    </div>
+  </section>
+
+  <!-- Auriculares -->
+  <section>
+    <h2>🎧 Auriculares Top</h2>
+    <div class="articles-grid">
+
+      <div class="card">
+        <img src="descarga.jpg" alt="Sony WH-1000XM5" loading="lazy">
+        <div class="card-content">
+          <h3>Sony WH-1000XM5</h3>
+          <p>Auriculares con cancelación de ruido líder y sonido Hi-Res.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Conectividad multipunto, 30h de batería, diseño cómodo y elegante. Perfectos para viajes y trabajo remoto.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="zana-latif-TnDTzDiJbJo-unsplash.jpg" alt="AirPods Pro 2" loading="lazy">
+        <div class="card-content">
+          <h3>AirPods Pro 2</h3>
+          <p>Auriculares inalámbricos con cancelación activa de ruido.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Control táctil, sonido envolvente, carga rápida. Ideales para iPhone y dispositivos Apple.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="kofi-nartey-SHEUuUAZrDE-unsplash.jpg" alt="Bose QuietComfort 45" loading="lazy">
+        <div class="card-content">
+          <h3>Bose QuietComfort 45</h3>
+          <p>Auriculares cómodos con aislamiento de sonido profesional.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Sonido equilibrado, diseño ergonómico y gran duración de batería para largas jornadas de música o trabajo.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Smartwatches -->
+  <section>
+    <h2>⌚ Smartwatches</h2>
+    <div class="articles-grid">
+
+      <div class="card">
+        <img src="LD0006065047.jpg" alt="Apple Watch Series 9" loading="lazy">
+        <div class="card-content">
+          <h3>Apple Watch Series 9</h3>
+          <p>Smartwatch con seguimiento avanzado de salud y fitness.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Monitoreo de ritmo cardíaco, oxígeno en sangre, sueño y actividad física. Ideal para usuarios de iPhone.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="images.jpg" alt="Samsung Galaxy Watch 6" loading="lazy">
+        <div class="card-content">
+          <h3>Samsung Galaxy Watch 6</h3>
+          <p>Smartwatch versátil con seguimiento de fitness y salud para Android.</p>
+          <button class="read-more" onclick="toggleText(this)">Leer más</button>
+          <p class="more-text">Seguimiento de ejercicio, frecuencia cardíaca, sueño y GPS. Resistente al agua y compatible con varios dispositivos Android.</p>
+        </div>
+      </div>
+
+    </div>
   </section>
 
 </main>
