@@ -1,364 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GadgetPulse - Los Gadgets Más Buscados en 2025</title>
+<meta name="description" content="Descubre los gadgets más populares de 2025: smartphones, auriculares, dispositivos inteligentes y más. Reseñas completas y actualizadas para usuarios exigentes.">
+<meta name="keywords" content="gadgets 2025, smartphones 2025, auriculares 2025, dispositivos inteligentes, tecnología, Apple, Samsung, Sony, Anker, Google Pixel">
+<meta name="author" content="GadgetPulse">
 
-  <title>Guía de Gadgets 2025 – Comparativas, Guías y Ofertas</title>
-  <meta name="description" content="Descubre comparativas de móviles, smartwatches y gadgets del 2025. Guías claras, ofertas y consejos prácticos. Optimizado para SEO y listo para Google AdSense." />
-  <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://tu-dominio.com/" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Guía de Gadgets 2025 – Comparativas, Guías y Ofertas" />
-  <meta property="og:description" content="Comparativas y guías reales para elegir mejor en tecnología 2025." />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&q=80&auto=format&fit=crop" />
-  <meta property="og:url" content="https://tu-dominio.com/" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Guía de Gadgets 2025 – Comparativas, Guías y Ofertas" />
-  <meta name="twitter:description" content="Comparativas, guías y ofertas en tecnología. Elige sin complicarte." />
-  <meta name="twitter:image" content="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&q=80&auto=format&fit=crop" />
-
-  <meta name="theme-color" content="#0ea5e9" />
-
-  <!-- Tipografías -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Estilos -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Google AdSense (reemplaza tu publisher ID) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-          data-ad-client="ca-pub-TU_CODIGO_ADSENSE"></script>
-
-  <!-- Datos estructurados: WebSite + buscador interno -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"WebSite",
-    "name":"Guía de Gadgets 2025",
-    "url":"https://tu-dominio.com/",
-    "potentialAction":{
-      "@type":"SearchAction",
-      "target":"https://tu-dominio.com/?q={search_term_string}",
-      "query-input":"required name=search_term_string"
-    }
-  }
-  </script>
+<!-- CSS de antes -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a class="skip" href="#contenido">Saltar al contenido</a>
+<header>
+    <h1>GadgetPulse</h1>
+    <p>Los gadgets más buscados y populares de 2025</p>
+</header>
 
-  <header class="header">
-    <div class="container header__inner">
-      <a class="logo" href="/" aria-label="Inicio">⚡ Gadgets 2025</a>
+<main class="container">
+    <!-- Smartphones -->
+    <section>
+        <h2>📱 Smartphones Populares</h2>
 
-      <nav class="nav" aria-label="Principal">
-        <button class="nav__toggle" aria-expanded="false" aria-controls="menu">☰</button>
-        <ul id="menu" class="nav__menu">
-          <li><a href="#comparativas">Comparativas</a></li>
-          <li><a href="#guias">Guías</a></li>
-          <li><a href="#ofertas">Ofertas</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contacto">Contacto</a></li>
-        </ul>
-      </nav>
-
-      <button id="themeToggle" class="theme" aria-label="Cambiar tema">🌙</button>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero__inner">
-      <div class="hero__copy">
-        <h1>Elige tecnología sin complicarte</h1>
-        <p>Comparativas claras, guías útiles y ofertas reales. Todo lo que necesitas para comprar bien en 2025.</p>
-
-        <form class="search" role="search" aria-label="Buscar artículos" onsubmit="return false;">
-          <input id="searchInput" type="search" placeholder="Buscar: móvil, reloj, auriculares..." aria-label="Buscar" />
-        </form>
-
-        <!-- AdSense (hero) -->
-        <div class="ad ad--hero">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-TU_CODIGO_ADSENSE"
-               data-ad-slot="1000000001"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-      </div>
-
-      <figure class="hero__media">
-        <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200&q=80&auto=format&fit=crop"
-             alt="Gadgets modernos sobre una mesa" width="1200" height="900" loading="eager" />
-      </figure>
-    </div>
-  </section>
-
-  <main id="contenido">
-    <!-- COMPARATIVAS -->
-    <section id="comparativas" class="section container">
-      <div class="section__head">
-        <h2>Comparativas destacadas</h2>
-        <p>Selección con lo mejor en relación calidad–precio, autonomía y rendimiento.</p>
-      </div>
-
-      <div class="grid" id="cardsGrid" aria-live="polite">
-        <!-- Card 1 -->
-        <article class="card" data-tags="smartphone móvil barato camara bateria" id="art-smartphones-baratos">
-          <a class="card__media" href="#art-smartphones-baratos" aria-label="Leer comparativa de smartphones baratos">
-            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80&auto=format&fit=crop"
-                 alt="Smartphones económicos sobre fondo oscuro" width="800" height="600" loading="lazy" decoding="async" />
-          </a>
-          <div class="card__body">
-            <h3>Los 5 mejores smartphones baratos de 2025</h3>
-            <p>Rendimiento sólido, buenas cámaras y batería para todo el día sin romper el presupuesto.</p>
-            <ul class="pros">
-              <li>+ Pantalla nítida 90–120 Hz</li>
-              <li>+ 48–64 MP con buen modo noche</li>
-              <li>+ 5000 mAh y carga rápida</li>
-            </ul>
-            <a class="btn" href="#art-smartphones-baratos">Leer más</a>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="card" data-tags="smartwatch reloj salud deporte bateria gps" id="art-smartwatch">
-          <a class="card__media" href="#art-smartwatch" aria-label="Leer guía de smartwatch">
-            <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w=800&q=80&auto=format&fit=crop"
-                 alt="Smartwatch moderno con pantalla encendida" width="800" height="600" loading="lazy" decoding="async" />
-          </a>
-          <div class="card__body">
-            <h3>Cómo elegir un smartwatch en 2025</h3>
-            <p>Compatibilidad, sensores de salud, autonomía y resistencia al agua: lo que importa de verdad.</p>
-            <ul class="pros">
-              <li>+ GPS y NFC opcional</li>
-              <li>+ Oxígeno en sangre, estrés y sueño</li>
-              <li>+ 7–14 días de batería</li>
-            </ul>
-            <a class="btn" href="#art-smartwatch">Leer más</a>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="card" data-tags="auriculares earbuds musica cancelacion ruido" id="art-auriculares">
-          <a class="card__media" href="#art-auriculares" aria-label="Leer comparativa de auriculares">
-            <img src="https://images.unsplash.com/photo-1518443895914-6fbf227d3d17?w=800&q=80&auto=format&fit=crop"
-                 alt="Auriculares con cancelación de ruido" width="800" height="600" loading="lazy" decoding="async" />
-          </a>
-          <div class="card__body">
-            <h3>Auriculares con cancelación de ruido: top 2025</h3>
-            <p>Comodidad, buena cancelación activa (ANC) y sonido equilibrado para trabajar y viajar.</p>
-            <ul class="pros">
-              <li>+ ANC efectivo</li>
-              <li>+ Bluetooth multipunto</li>
-              <li>+ 30–60 h de autonomía</li>
-            </ul>
-            <a class="btn" href="#art-auriculares">Leer más</a>
-          </div>
-        </article>
-
-        <!-- Card 4 -->
-        <article class="card" data-tags="hogar inteligente domotica camara enchufe bombilla robot aspirador" id="art-hogar">
-          <a class="card__media" href="#art-hogar" aria-label="Leer gadgets hogar inteligente">
-            <img src="https://images.unsplash.com/photo-1512412046871-b90cd0be0d69?w=800&q=80&auto=format&fit=crop"
-                 alt="Dispositivos de hogar inteligente" width="800" height="600" loading="lazy" decoding="async" />
-          </a>
-          <div class="card__body">
-            <h3>Top gadgets para tu hogar inteligente</h3>
-            <p>Enchufes, bombillas, cámaras y robots aspiradores que realmente marcan diferencia.</p>
-            <ul class="pros">
-              <li>+ Ahorro energético</li>
-              <li>+ Automatizaciones útiles</li>
-              <li>+ Seguridad siempre activa</li>
-            </ul>
-            <a class="btn" href="#art-hogar">Leer más</a>
-          </div>
-        </article>
-      </div>
-
-      <!-- AdSense (entre bloques) -->
-      <div class="ad ad--incontent">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-TU_CODIGO_ADSENSE"
-             data-ad-slot="1000000002"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-      </div>
-
-      <!-- Bloques largos (contenido SEO) -->
-      <article class="longform" aria-labelledby="h-smartphones">
-        <h3 id="h-smartphones">Comparativa completa: smartphones baratos</h3>
-        <p>Para elegir bien mira panel (brillo y tasa de refresco), chipset (fluidez real), cámara en baja luz y batería con carga rápida. En 2025 encontramos opciones muy sólidas por debajo de 300€.</p>
-        <ul>
-          <li><strong>Opción A:</strong> mejor cámara nocturna.</li>
-          <li><strong>Opción B:</strong> mejor batería y carga 67W.</li>
-          <li><strong>Opción C:</strong> gran pantalla AMOLED 120 Hz.</li>
-        </ul>
-      </article>
-
-      <article class="longform" aria-labelledby="h-auriculares">
-        <h3 id="h-auriculares">Guía rápida: ANC y calidad de sonido</h3>
-        <p>La cancelación activa (ANC) reduce ruido constante; busca perfiles de sonido neutros y códecs AAC/LDAC. La comodidad y el sellado marcan la diferencia en el grave.</p>
-      </article>
-    </section>
-
-    <!-- GUÍAS -->
-    <section id="guias" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>Guías esenciales</h2>
-          <p>Consejos prácticos para comprar y configurar como un pro.</p>
-        </div>
-
-        <div class="grid">
-          <article class="card" data-tags="guia bateria autonomia cuidado">
-            <div class="card__body">
-              <h3>Cómo alargar la vida de la batería</h3>
-              <p>Carga entre 20–80%, evita calor extremo y mantén el brillo automático. Actualiza firmware cuando haya mejoras energéticas.</p>
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://www.apple.com/newsroom/images/product/iphone/standard/Apple_iPhone14Pro_Purple_09142022_inline.jpg.large.jpg" alt="iPhone 14 Pro">
             </div>
-          </article>
-
-          <article class="card" data-tags="guia privacidad seguridad datos">
-            <div class="card__body">
-              <h3>Privacidad y seguridad en tu móvil</h3>
-              <p>Activa 2FA, revisa permisos de apps y usa bloqueos biométricos. Copias en la nube cifradas.</p>
+            <div class="product-content">
+                <h3>iPhone 14 Pro - Apple</h3>
+                <p>Diseño elegante, chip A16 Bionic, cámara Pro avanzada y pantalla Super Retina XDR de 6.1".</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Incluye Dynamic Island, estabilización avanzada de video, modo noche mejorado y toda la experiencia iOS. Ideal para fotografía y rendimiento extremo.</p>
             </div>
-          </article>
+        </div>
 
-          <article class="card" data-tags="guia smartwatch salud deporte gps">
-            <div class="card__body">
-              <h3>Configura tu smartwatch para entrenar mejor</h3>
-              <p>Activa GPS solo cuando entrenes, ajusta alertas de ritmo y usa modos de ahorro para tiradas largas.</p>
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/61I0p5yauBL._AC_SL1500_.jpg" alt="Samsung Galaxy S23">
             </div>
-          </article>
+            <div class="product-content">
+                <h3>Samsung Galaxy S23 - Samsung</h3>
+                <p>Procesador Snapdragon 8 Gen 2, pantalla Dynamic AMOLED 2X, cámaras de 200MP y batería duradera.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Funciones de IA avanzadas, carga rápida, modo fotografía profesional y experiencia Android fluida. Ideal para multitarea y gaming.</p>
+            </div>
         </div>
 
-        <!-- AdSense (guías) -->
-        <div class="ad ad--incontent">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-TU_CODIGO_ADSENSE"
-               data-ad-slot="1000000003"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/61r-Pc9pD3L._AC_SL1500_.jpg" alt="Google Pixel 10 Pro">
+            </div>
+            <div class="product-content">
+                <h3>Google Pixel 10 Pro</h3>
+                <p>Potente procesador Tensor G5, pantalla Super Actua, cámara con zoom Pro Res y funciones AI avanzadas.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Funcionalidades como Camera Coach y Gemini Live permiten fotografía profesional y una experiencia Android optimizada.</p>
+            </div>
         </div>
-      </div>
     </section>
 
-    <!-- OFERTAS -->
-    <section id="ofertas" class="section container">
-      <div class="section__head">
-        <h2>Ofertas destacadas</h2>
-        <p>Selección curada (orientativa) para diferentes presupuestos.</p>
-      </div>
+    <!-- Auriculares -->
+    <section>
+        <h2>🎧 Auriculares y Audio</h2>
 
-      <div class="deals">
-        <div class="deal">
-          <span class="deal__tag">Ahorro</span>
-          <h3>Smartphone 120 Hz</h3>
-          <p>Buen rendimiento y batería por menos de 250€.</p>
-          <a class="btn btn--ghost" href="#" rel="nofollow">Ver oferta</a>
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/71yHUGvTQxL._AC_SX679_.jpg" alt="Sony WH-1000XM5">
+            </div>
+            <div class="product-content">
+                <h3>Sony WH-1000XM5</h3>
+                <p>Cancelación de ruido líder, sonido nítido, cómodo para largas sesiones.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Batería hasta 30 horas, carga rápida y Bluetooth multipunto. Perfectos para música, llamadas y entretenimiento.</p>
+            </div>
         </div>
-        <div class="deal">
-          <span class="deal__tag">Top ventas</span>
-          <h3>Auriculares ANC</h3>
-          <p>Gran cancelación de ruido y comodidad para viajes.</p>
-          <a class="btn btn--ghost" href="#" rel="nofollow">Ver oferta</a>
+
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/71Uj2u1Py5L._AC_SX679_.jpg" alt="Apple AirPods 4">
+            </div>
+            <div class="product-content">
+                <h3>Apple AirPods 4</h3>
+                <p>Reproducción de audio fluida, diseño ergonómico y conexión rápida con dispositivos Apple.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Micrófonos integrados, estuche de carga, control por gestos y alta calidad de sonido para llamadas y música.</p>
+            </div>
         </div>
-        <div class="deal">
-          <span class="deal__tag">Premium</span>
-          <h3>Smartwatch con GPS</h3>
-          <p>Mapas offline y métricas avanzadas de salud.</p>
-          <a class="btn btn--ghost" href="#" rel="nofollow">Ver oferta</a>
-        </div>
-      </div>
     </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="section section--alt">
-      <div class="container">
-        <div class="section__head">
-          <h2>Preguntas frecuentes</h2>
-          <p>Respuestas cortas y al grano.</p>
+    <!-- Dispositivos Inteligentes -->
+    <section>
+        <h2>🏠 Dispositivos Inteligentes</h2>
+
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/61tGZJyp2vL._AC_SL1500_.jpg" alt="Roborock QRevo Curv 2 Pro">
+            </div>
+            <div class="product-content">
+                <h3>Roborock QRevo Curv 2 Pro</h3>
+                <p>Robot aspirador avanzado con brazo mecánico de cinco ejes y navegación precisa.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Recolecta, mueve y desecha objetos, mejorando la limpieza del hogar. Batería de larga duración y programación inteligente.</p>
+            </div>
         </div>
 
-        <div class="faq" role="list">
-          <details class="faq__item">
-            <summary>¿Cuántos anuncios son recomendables por página?</summary>
-            <p>Usa Auto Ads o 2–4 bloques manuales en posiciones visibles sin afectar la lectura.</p>
-          </details>
-          <details class="faq__item">
-            <summary>¿Cada cuánto actualizáis las comparativas?</summary>
-            <p>Revisamos mensualmente y cuando salen modelos relevantes.</p>
-          </details>
-          <details class="faq__item">
-            <summary>¿Aceptáis sugerencias?</summary>
-            <p>Sí, escríbenos y las consideramos para próximas guías.</p>
-          </details>
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://m.media-amazon.com/images/I/61-nvG1U6VL._AC_SL1500_.jpg" alt="Philips Hue con Sonos">
+            </div>
+            <div class="product-content">
+                <h3>Philips Hue con Sonos</h3>
+                <p>Sistema de iluminación inteligente integrado con sonido Sonos para crear ambientes personalizados.</p>
+                <button class="read-more-btn" onclick="toggleText(this)">Leer más</button>
+                <p class="extra-text" style="display:none;">Compatible con asistentes de voz, control por app, escenarios dinámicos y sincronización con música.</p>
+            </div>
         </div>
-
-        <!-- AdSense (FAQ) -->
-        <div class="ad ad--incontent">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-TU_CODIGO_ADSENSE"
-               data-ad-slot="1000000004"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-      </div>
     </section>
+</main>
 
-    <!-- CONTACTO -->
-    <section id="contacto" class="section container">
-      <div class="section__head">
-        <h2>Contacto</h2>
-      </div>
-      <p>¿Tienes dudas o una marca quiere colaborar? Escríbenos:</p>
-      <p><a class="btn" href="mailto:hola@tu-dominio.com">hola@tu-dominio.com</a></p>
-    </section>
-  </main>
+<footer>
+    <p>© 2025 GadgetPulse. Todos los derechos reservados.</p>
+</footer>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p>© 2025 Gadgets 2025. Todos los derechos reservados.</p>
-      <nav aria-label="Legal">
-        <a href="#" rel="nofollow">Privacidad</a>
-        <a href="#" rel="nofollow">Términos</a>
-        <a href="#" rel="nofollow">Cookies</a>
-      </nav>
-    </div>
-  </footer>
-
-  <!-- Datos estructurados: lista de artículos -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"CollectionPage",
-    "name":"Comparativas y guías de gadgets 2025",
-    "hasPart":[
-      {"@type":"Article","headline":"Los 5 mejores smartphones baratos de 2025","url":"https://tu-dominio.com/#art-smartphones-baratos"},
-      {"@type":"Article","headline":"Cómo elegir un smartwatch en 2025","url":"https://tu-dominio.com/#art-smartwatch"},
-      {"@type":"Article","headline":"Auriculares con cancelación de ruido: top 2025","url":"https://tu-dominio.com/#art-auriculares"},
-      {"@type":"Article","headline":"Top gadgets para tu hogar inteligente","url":"https://tu-dominio.com/#art-hogar"}
-    ]
-  }
-  </script>
-
-  <script defer src="script.js"></script>
+<script>
+function toggleText(button){
+    const extraText = button.nextElementSibling;
+    if(extraText.style.display==="none"){
+        extraText.style.display="block";
+        button.textContent="Leer menos";
+    } else {
+        extraText.style.display="none";
+        button.textContent="Leer más";
+    }
+}
+</script>
 </body>
 </html>
-
